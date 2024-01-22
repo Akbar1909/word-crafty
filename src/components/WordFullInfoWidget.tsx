@@ -13,28 +13,32 @@ import {WordModel} from '../data/word';
 import MyTheme from '../theme/colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-interface WordFullInfoWidgetProps extends WordModel {}
+interface WordFullInfoWidgetProps extends WordModel {
+  handleSavePress: (definitionId: number) => void;
+}
 
 const WordFullInfoWidget: FC<WordFullInfoWidgetProps> = ({
   word,
   definitions,
+  handleSavePress,
 }) => {
   return (
-    <View style={tw`mt-3 w-full`}>
-      <ScrollView contentContainerStyle={tw`w-full pb-8 items-center`}>
+    <View style={tw`mt-4 w-full`}>
+      <ScrollView contentContainerStyle={[tw`w-full items-center pb-25`]}>
         <View style={{width: '94%'}}>
           <Text style={{fontSize: 20, marginBottom: 10, fontWeight: '700'}}>
             {word}
           </Text>
 
           <View style={styles.content}>
-            {definitions.map(({definition, examples}, i) => (
+            {definitions.map(({definition, examples, definitionId}, i) => (
               <View
                 key={i}
                 style={[tw`pt-3 pb-3 pr-3 pl-3 rounded-2xl bg-purple-200`]}>
                 <TouchableOpacity
+                  onPress={() => handleSavePress(definitionId)}
                   style={[
-                    tw`p-2 mb-2 border-2 border-purple-800 rounded-2xl flex-row items-center w-min`,
+                    tw`p-2 mb-2 border-2 border-purple-800 rounded-2xl flex-row items-center`,
                     {alignSelf: 'flex-start', marginLeft: 'auto'},
                   ]}>
                   <FontAwesome
@@ -74,7 +78,7 @@ const WordFullInfoWidget: FC<WordFullInfoWidgetProps> = ({
                       source={{
                         uri: 'https://clipart-library.com/data_images/6103.png',
                       }}
-                      style={{width: 200, height: 200}}
+                      style={{width: 220, height: 220}}
                     />
                   </View>
                 ))}

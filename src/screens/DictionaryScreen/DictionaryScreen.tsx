@@ -6,25 +6,28 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import MyTheme from '../../theme/colors';
-import SPACING from '../../theme/spacing';
 import {useAuth} from '../../providers/AuthProvider';
-import {useNavigation} from '@react-navigation/native';
 import {searchOneWord, searchWords} from '../../data/word/word.requests';
 import {WordModel} from '../../data/word';
 import WordFullInfoWidget from '../../components/WordFullInfoWidget';
-import Hidden from '../../components/Hidden';
+import {BottomSheetModal} from '@gorhom/bottom-sheet';
+import ChooseWordListBottomSheet from './ChooseWordListBottomSheet';
+import {WordDefinitionModel} from '../../data/word-definition';
 
 export default function DictionaryScreen() {
-  const {navigate} = useNavigation();
   const [wordId, setWordId] = useState<null | number>(null);
   const [search, setSearch] = useState('');
+  const [selectedDefinitionId, setSelectedDefinitionId] = useState<
+    number | null
+  >(null);
   const [openDropdownMenu, setOpenDropdownMenu] = useState(true);
+
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const {hasValidToken} = useAuth();
 
@@ -45,13 +48,20 @@ export default function DictionaryScreen() {
     select: response => response.data?.data as WordModel,
   });
 
+  const handlePresentModalPress = (
+    definitionId: WordDefinitionModel['definitionId'],
+  ) => {
+    console.log({definitionId});
+    setSelectedDefinitionId(definitionId);
+
+    bottomSheetModalRef.current?.present();
+  };
+
   const handleSearch = (query: string) => {
     if (!hasValidToken) {
       // @ts-ignore
       // navigate('LoginScreen');
     }
-
-    console.log({openDropdownMenu});
 
     setSearch(query);
   };
@@ -66,42 +76,57 @@ export default function DictionaryScreen() {
   };
 
   return (
-    <SafeAreaView edges={['top']} style={styles.screen}>
-      <View
-        style={{
-          width: '100%',
-          alignItems: 'center',
-          position: 'relative',
-        }}>
-        <TextInput
-          placeholder="Search"
-          clearButtonMode="always"
-          style={styles.searchBar}
-          autoCapitalize="none"
-          autoCorrect={false}
-          value={search}
-          onChangeText={handleSearch}
-          onTouchStart={() => setOpenDropdownMenu(true)}
-        />
+    <>
+      <SafeAreaView edges={['top']} style={styles.screen}>
+        <View
+          style={{
+            width: '100%',
+            alignItems: 'center',
+            position: 'relative',
+          }}>
+          <TextInput
+            placeholder="Search"
+            clearButtonMode="always"
+            style={styles.searchBar}
+            autoCapitalize="none"
+            autoCorrect={false}
+            value={search}
+            onChangeText={handleSearch}
+            onTouchStart={() => setOpenDropdownMenu(true)}
+          />
 
-        <FlatList
-          data={data}
-          style={[styles.flatList, {height: openDropdownMenu ? 400 : 0}]}
-          renderItem={({item}: {item: Pick<WordModel, 'word' | 'wordId'>}) => (
-            <TouchableOpacity
-              onPress={() => handleOnPress(item.wordId, item.word)}
-              style={styles.wordItem}>
-              <Text>{item.word}</Text>
-            </TouchableOpacity>
+          <FlatList
+            data={data}
+            style={[styles.flatList, {height: openDropdownMenu ? 400 : 0}]}
+            renderItem={({
+              item,
+            }: {
+              item: Pick<WordModel, 'word' | 'wordId'>;
+            }) => (
+              <TouchableOpacity
+                onPress={() => handleOnPress(item.wordId, item.word)}
+                style={styles.wordItem}>
+                <Text>{item.word}</Text>
+              </TouchableOpacity>
+            )}
+            keyExtractor={(item: Pick<WordModel, 'word' | 'wordId'>) =>
+              item.wordId.toString()
+            }
+          />
+
+          {wordState.isSuccess && (
+            <WordFullInfoWidget
+              handleSavePress={handlePresentModalPress}
+              {...wordState.data}
+            />
           )}
-          keyExtractor={(item: Pick<WordModel, 'word' | 'wordId'>) =>
-            item.wordId.toString()
-          }
-        />
-
-        {wordState.isSuccess && <WordFullInfoWidget {...wordState.data} />}
-      </View>
-    </SafeAreaView>
+          <ChooseWordListBottomSheet
+            definitionId={selectedDefinitionId as number}
+            ref={bottomSheetModalRef}
+          />
+        </View>
+      </SafeAreaView>
+    </>
   );
 }
 

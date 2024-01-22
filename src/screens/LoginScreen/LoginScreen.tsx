@@ -16,7 +16,6 @@ import SPACING from '../../theme/spacing';
 import MyTheme from '../../theme/colors';
 import {login} from '../../data/auth';
 import {useNavigation} from '@react-navigation/native';
-import {REACT_APP_SERVER_BASE_URL, REACT_APP_PROD_SERVER_BASE_URL} from '@env';
 import {useAuth} from '../../providers/AuthProvider';
 
 export default function LoginScreen() {
@@ -25,8 +24,8 @@ export default function LoginScreen() {
   const {isPending, ...rest} = useMutation({
     mutationFn: login,
     mutationKey: ['login'],
-    onSuccess: async response => {
-      await saveTokenToStorage({accessToken: response.data?.access_token});
+    onSuccess: response => {
+      saveTokenToStorage({accessToken: response.data?.access_token});
       // @ts-ignore
       navigate('HomeScreen');
     },
@@ -36,15 +35,12 @@ export default function LoginScreen() {
     handleSubmit,
     control,
     // formState: {errors},
-  } = useForm();
+  } = useForm({
+    defaultValues: {email: 'dev.bobomurodov@gmail.com', password: 'akbar123'},
+  });
 
   const onSubmit = handleSubmit((data: any) => {
     rest.mutate(data);
-    console.log(
-      data,
-      REACT_APP_SERVER_BASE_URL,
-      REACT_APP_PROD_SERVER_BASE_URL,
-    );
   });
 
   return (

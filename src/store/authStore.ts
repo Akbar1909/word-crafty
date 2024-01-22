@@ -1,4 +1,5 @@
 import {create} from 'zustand';
+import {authMMKVStorage} from './mmkv/store';
 
 export interface UseAuthStoreState {
   accessToken: string | null;
@@ -10,8 +11,8 @@ export interface UseAuthStoreState {
 }
 
 const useAuthStore = create<UseAuthStoreState>()(set => ({
-  accessToken: null,
-  refreshToken: null,
+  accessToken: authMMKVStorage.getString('access_token') || null,
+  refreshToken: authMMKVStorage.getString('refresh_token') || null,
   setTokens: (accessToken: string | null, refreshToken: string | null) =>
     set(state => ({...state, accessToken, refreshToken})),
 }));

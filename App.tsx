@@ -10,22 +10,29 @@ import Layout from './src/components/Layout/Layout';
 import MainScreens from './src/MainScreens';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from './src/screens/LoginScreen';
-import HomeScreen from './src/screens/HomeScreen';
+import {useAuth} from './src/providers/AuthProvider';
 
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
-  // return <HomeScreen />;
+  const {hasValidToken} = useAuth();
+
   return (
-    <Layout>
-      <Stack.Navigator
-        screenOptions={{headerShown: false}}
-        initialRouteName="HomeScreen">
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="HomeScreen" component={MainScreens} />
-      </Stack.Navigator>
-    </Layout>
+    <Stack.Navigator
+      screenOptions={{headerShown: false}}
+      initialRouteName={hasValidToken ? 'HomeScreen' : 'LoginScreen'}>
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
+      <Stack.Screen name="HomeScreen" component={MainScreens} />
+    </Stack.Navigator>
   );
 }
 
-export default App;
+const Root = () => {
+  return (
+    <Layout>
+      <App />
+    </Layout>
+  );
+};
+
+export default Root;

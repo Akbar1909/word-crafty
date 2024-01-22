@@ -1,0 +1,1 @@
+export const MMKV_PREFIX = 'AKBAR_WORD_CRAFTY';

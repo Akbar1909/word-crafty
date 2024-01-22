@@ -3,6 +3,7 @@
 import React from 'react';
 import {Platform, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import HomeScreen from './screens/HomeScreen';
 import CreateWordListScreen from './screens/CreateWordListScreen';
@@ -12,8 +13,11 @@ import StoryListScreen from './screens/StoryListScreen';
 import TabBarIcon from './components/Layout/TabBarIcon';
 import MyTheme from './theme/colors';
 import {useAuth} from './providers/AuthProvider';
+import WordListDetailsScreen from './screens/WordListDetailsScreen';
 
 const Tab = createBottomTabNavigator();
+
+const HomeStack = createNativeStackNavigator();
 
 const screenOptions = {
   headerShown: false,
@@ -32,10 +36,9 @@ const Screens = () => {
 
           tabBarStyle: {backgroundColor: MyTheme.colors.PRIMARY.main},
         }}
-        initialRouteName="Home">
+        initialRouteName="Dictionary">
         <Tab.Screen
           name={'Home'}
-          component={HomeScreen}
           options={{
             tabBarIcon: ({focused}) => (
               <TabBarIcon
@@ -45,8 +48,17 @@ const Screens = () => {
                 iconComponent="font-awesome"
               />
             ),
-          }}
-        />
+          }}>
+          {() => (
+            <HomeStack.Navigator screenOptions={{headerShown: false}}>
+              <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+              <HomeStack.Screen
+                name="WordListDetailsScreen"
+                component={WordListDetailsScreen}
+              />
+            </HomeStack.Navigator>
+          )}
+        </Tab.Screen>
         <Tab.Screen
           name="Stories"
           component={StoryListScreen}
