@@ -14,6 +14,8 @@ import TabBarIcon from './components/Layout/TabBarIcon';
 import MyTheme from './theme/colors';
 import {useAuth} from './providers/AuthProvider';
 import WordListDetailsScreen from './screens/WordListDetailsScreen';
+import GameListScreen from './screens/GameListScreen';
+import WordScrambleScreen from './screens/WordScrambleScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -55,6 +57,14 @@ const Screens = () => {
               <HomeStack.Screen
                 name="WordListDetailsScreen"
                 component={WordListDetailsScreen}
+              />
+              <HomeStack.Screen
+                name="GameListScreen"
+                component={GameListScreen}
+              />
+              <HomeStack.Screen
+                name="WordScrambleGame"
+                component={WordScrambleScreen}
               />
             </HomeStack.Navigator>
           )}

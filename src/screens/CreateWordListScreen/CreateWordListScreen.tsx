@@ -22,9 +22,7 @@ export default function CreateWordListScreen() {
   const {mutate, isPending} = useMutation({
     mutationFn: createWordList,
     mutationKey: ['create-word-list'],
-    onSuccess: ({data}) => {
-      console.log(data);
-    },
+    onSuccess: ({data}) => {},
   });
 
   const {

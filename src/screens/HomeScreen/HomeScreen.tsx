@@ -41,7 +41,7 @@ export default function HomeScreen() {
         style={{flex: 1}}
         contentContainerStyle={{
           paddingVertical: 10,
-          paddingHorizontal: 5,
+          paddingHorizontal: 4,
         }}>
         <View style={tw`mb-3`}>
           <Text style={tw`text-lg`}>Welcome</Text>

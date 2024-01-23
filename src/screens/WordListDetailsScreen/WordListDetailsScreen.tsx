@@ -13,7 +13,6 @@ import {useNavigation} from '@react-navigation/native';
 import MyModal from '../../components/MyModal';
 import ConfirmationModalContent from '../../components/ConfirmationModalContent';
 import {toggleDefinitionToWordList} from '../../data/word-list';
-import queryClient from '../../queryClient';
 import {useRefreshOnFocus} from '../../hooks/helpers/useRefreshOnFocus';
 import {SECONDARY_COLORS} from '../../theme/colors';
 
@@ -62,7 +61,6 @@ const WordListDetailsScreen = ({route}: any) => {
   }, []);
 
   const handleDeleteOk = useCallback(() => {
-    console.log({pressedDefinitionId, wordListId});
     mutate({
       definitionId: pressedDefinitionId as number,
       wordListId,
@@ -78,7 +76,15 @@ const WordListDetailsScreen = ({route}: any) => {
 
       <View style={tw`flex flex-row items-center justify-center mb-4 gap-3`}>
         <View>
-          <MaterialIcons name="quiz" size={32} color={SECONDARY_COLORS.main} />
+          <MaterialIcons
+            onPress={() => {
+              // @ts-ignore
+              navigate('GameListScreen');
+            }}
+            name="quiz"
+            size={32}
+            color={SECONDARY_COLORS.main}
+          />
         </View>
         <View>
           <MaterialIcons name="sort-by-alpha" size={32} />

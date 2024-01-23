@@ -4,7 +4,6 @@ import {WordDefinitionModel} from '../data/word-definition';
 import {WordModel} from '../data/word';
 import tw from 'twrnc';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {WordListModel} from '../data/word-list';
 
 interface DefinitionCardProps extends WordDefinitionModel {
   word: WordModel['word'];

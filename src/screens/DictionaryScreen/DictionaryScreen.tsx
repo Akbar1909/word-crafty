@@ -51,7 +51,6 @@ export default function DictionaryScreen() {
   const handlePresentModalPress = (
     definitionId: WordDefinitionModel['definitionId'],
   ) => {
-    console.log({definitionId});
     setSelectedDefinitionId(definitionId);
 
     bottomSheetModalRef.current?.present();

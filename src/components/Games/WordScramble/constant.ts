@@ -1,1 +1,1 @@
-export const CHAR_BUTTON_SIZE = 40;
+export const CHAR_BUTTON_SIZE = 46;

@@ -122,6 +122,8 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
   const [elements, setElements] = useState<any[]>([]);
 
   const {input, shuffledWord, word} = state.words[state.selectedWord];
+  const firstBoxY = useRef<number>(0);
+  const secondBoxY = useRef<number>(0);
 
   const locationRef = useRef<Record<BoxType, Record<string, Position>>>({
     first: {},
@@ -143,28 +145,19 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
   };
 
   const updateBoxY = (y: number, boxType: 'first' | 'second') => {
-    locationRef.current[boxType] = Object.keys(
-      locationRef.current[boxType],
-    ).reduce(
-      (acc, cur) => ({
-        ...acc,
-        [cur]: {x: locationRef.current[boxType][cur].x, y},
-      }),
-      {},
-    );
+    if (boxType === 'first') {
+      firstBoxY.current = y;
+    } else {
+      secondBoxY.current = y;
+    }
   };
 
   const handleAnimationCompletion = useCallback(
-    ({
-      values,
-      animatedElIndex,
-    }: {
-      animatedElIndex: number;
-      values: Partial<WordScrambleWordState>;
-    }) => {
-      setElements(prev =>
-        prev.slice(0, animatedElIndex).concat(prev.slice(animatedElIndex)),
-      );
+    ({values}: {values: Partial<WordScrambleWordState>}) => {
+      setElements(prev => {
+        prev.shift();
+        return prev;
+      });
 
       dispatch({
         type: WORD_SCRAMBLE_ACTION_TYPES.SET_NEW_VALUE_TO_WORD_PROPERTY,
@@ -183,9 +176,15 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
     char: string;
     orgIndex: number;
   }) => {
-    const targetIndex = history.find(({first, second}) => first === second)
+    const targetIndex = history.find(({first}) => first === orgIndex)
       ?.second as number;
-    const targetPosition = second[targetIndex];
+    firstBox = firstBox.filter(i => i !== orgIndex);
+    history = history.filter(({first}) => first !== orgIndex);
+
+    const targetPosition = {
+      ...second[targetIndex],
+      y: secondBoxY.current + second[targetIndex].y,
+    };
 
     const newInput = replaceAt(input, ' ', orgIndex);
     dispatch({
@@ -193,14 +192,13 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
       payload: {input: newInput, word},
     });
 
-    const newShuffledWord = replaceAt(shuffledWord, ' ', targetIndex);
+    const newShuffledWord = replaceAt(shuffledWord, char, targetIndex);
 
     setElements(prev => [
       ...prev,
       <AnimatedCharButton
         values={{shuffledWord: newShuffledWord}}
-        animatedElIndex={prev.length}
-        org={position}
+        org={{...position, y: firstBoxY.current}}
         char={char}
         target={targetPosition}
         handleAnimationCompletion={handleAnimationCompletion}
@@ -221,7 +219,12 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
       .split('')
       .findIndex((ichar, i) => ichar === ' ' && !firstBox.includes(i));
     firstBox.push(targetIndex);
-    const targetPosition = first[targetIndex];
+    const targetPosition = {
+      ...first[targetIndex],
+      y: firstBoxY.current + first[targetIndex].y,
+    };
+
+    console.log({targetPosition, targetIndex});
 
     history.push({first: targetIndex, second: orgIndex});
 
@@ -237,10 +240,9 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
     setElements(prev => [
       ...prev,
       <AnimatedCharButton
-        animatedElIndex={prev.length}
         values={{input: newInput}}
         char={char}
-        org={position}
+        org={{...position, y: secondBoxY.current}}
         target={targetPosition}
         handleAnimationCompletion={handleAnimationCompletion}
       />,

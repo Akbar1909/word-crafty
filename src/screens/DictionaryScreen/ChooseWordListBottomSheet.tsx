@@ -29,9 +29,7 @@ const ChooseWordListBottomSheet = forwardRef(
         });
         ref.current?.close();
       },
-      onError: error => {
-        console.log(error.message);
-      },
+      onError: error => {},
     });
 
     // variables

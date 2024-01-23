@@ -34,8 +34,6 @@ const useGetWordLists = () => {
     [data],
   );
 
-  console.log(Array.from(preparedData.values()));
-
   useEffect(() => {
     if (isSuccess) {
       wordListsMMKVStorage.set(
