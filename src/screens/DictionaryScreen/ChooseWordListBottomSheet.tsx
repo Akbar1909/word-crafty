@@ -1,6 +1,6 @@
 import React, {useCallback, useMemo, forwardRef, useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {BottomSheetModal, BottomSheetFlatList} from '@gorhom/bottom-sheet';
 import useGetWordLists from '../../hooks/api/useGetWordLists';
 import WordListCard from '../../components/WordListCard';
@@ -15,6 +15,7 @@ const ChooseWordListBottomSheet = forwardRef(
   ({definitionId}: ChooseWordListBottomSheetProps, ref: any) => {
     // ref
 
+    const queryClient = useQueryClient();
     const [pressedId, setPressedId] = useState<number | null>(null);
 
     const {array} = useGetWordLists();
@@ -23,6 +24,9 @@ const ChooseWordListBottomSheet = forwardRef(
       mutationFn: toggleDefinitionToWordList,
       mutationKey: ['save'],
       onSuccess: response => {
+        queryClient.invalidateQueries({
+          queryKey: ['word-list-words', {wordListId: pressedId}],
+        });
         ref.current?.close();
       },
       onError: error => {

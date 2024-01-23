@@ -14,6 +14,10 @@ const GREY = {
   1000: '#2e2e38',
 };
 
+export const SECONDARY_COLORS = {
+  main: 'rgb(251, 191, 36)',
+};
+
 const MyTheme = {
   ...DefaultTheme,
   colors: {

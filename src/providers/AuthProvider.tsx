@@ -18,18 +18,13 @@ const AuthContext = createContext<AuthContextState>({
 const AuthProvider: FC<{children: any}> = ({children}) => {
   const {accessToken, setTokens} = useAuthStore();
 
-  console.log({accessToken}, 'main');
-
   const saveTokenToStorage = ({
     accessToken,
   }: Pick<UseAuthStoreState, 'accessToken'>) => {
     try {
-      console.log({accessToken});
       authMMKVStorage.set('access_token', accessToken || '');
       setTokens(accessToken, '');
-    } catch (e: any) {
-      console.log(e);
-    }
+    } catch (e: any) {}
   };
 
   const value: AuthContextState = useMemo(
@@ -40,8 +35,6 @@ const AuthProvider: FC<{children: any}> = ({children}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [accessToken],
   );
-
-  console.log({value}, 'main 2');
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

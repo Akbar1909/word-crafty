@@ -9,18 +9,16 @@ import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 
 export default function Layout({children}: {children: any}) {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <BottomSheetModalProvider>
-        <SafeAreaProvider>
-          <NavigationContainer>
-            <AuthProvider>
-              <QueryClientProvider client={queryClient}>
-                {children}
-              </QueryClientProvider>
-            </AuthProvider>
-          </NavigationContainer>
-        </SafeAreaProvider>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <BottomSheetModalProvider>
+          <SafeAreaProvider>
+            <NavigationContainer>
+              <AuthProvider>{children}</AuthProvider>
+            </NavigationContainer>
+          </SafeAreaProvider>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
 }

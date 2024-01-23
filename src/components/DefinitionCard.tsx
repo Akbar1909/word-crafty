@@ -22,7 +22,7 @@ const DefinitionCard: FC<DefinitionCardProps> = ({
   handleDeletePress,
 }) => {
   return (
-    <View style={tw`w-full bg-green-300 p-4 mb-2 rounded-xl`}>
+    <View style={tw`w-full bg-indigo-300 p-4 mb-2 rounded-xl`}>
       <Text style={tw`font-bold text-lg mb-1`}>{word}</Text>
       <Text style={tw`mb-1 text-gray-800`}>{partOfSpeech}</Text>
       <Text>{definition}</Text>

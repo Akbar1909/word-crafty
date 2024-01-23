@@ -6,11 +6,10 @@ import {WordDefinitionModel} from '../../data/word-definition';
 const useGetWordsByWordListId = (wordListId: number) => {
   const {data, ...rest} = useQuery({
     queryFn: async () => await getDefinitionsByWordListId({wordListId}),
-    queryKey: ['word-list-definitions', {wordListId}],
+    // NOTE query key is used in different place to make optimistic update
+    queryKey: ['word-list-words', {wordListId}],
     select: response => response.data,
   });
-
-  console.log(data);
 
   const preparedData: Map<
     number,
@@ -24,8 +23,6 @@ const useGetWordsByWordListId = (wordListId: number) => {
         : new Map(),
     [data],
   );
-
-  console.log({preparedData});
 
   return {
     keyValue: preparedData,

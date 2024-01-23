@@ -1,7 +1,7 @@
 import {useQuery} from '@tanstack/react-query';
 import {WordListModel, getWordLists} from '../../data/word-list';
 import {useEffect, useMemo} from 'react';
-import {wordListsMMKVStorage} from '../../store/mmkv/store';
+import {authMMKVStorage, wordListsMMKVStorage} from '../../store/mmkv/store';
 
 const useGetWordLists = () => {
   const {data, isSuccess, ...rest} = useQuery({
@@ -10,16 +10,16 @@ const useGetWordLists = () => {
     select: res => res.data,
     enabled: true,
     // @ts-ignore
-    initialData: {
-      data: {
-        data: {
-          list:
-            JSON.parse(
-              wordListsMMKVStorage.getString('my-word-lists-0') || '',
-            ) || [],
-        },
-      },
-    },
+    // initialData: {
+    //   data: {
+    //     data: {
+    //       list:
+    //         JSON.parse(
+    //           wordListsMMKVStorage.getString('my-word-lists-0') || '',
+    //         ) || [],
+    //     },
+    //   },
+    // },
   });
 
   const preparedData: Map<number, WordListModel> = useMemo(
@@ -34,7 +34,7 @@ const useGetWordLists = () => {
     [data],
   );
 
-  console.log(preparedData);
+  console.log(Array.from(preparedData.values()));
 
   useEffect(() => {
     if (isSuccess) {
