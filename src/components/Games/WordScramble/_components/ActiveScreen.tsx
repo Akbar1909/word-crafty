@@ -33,14 +33,13 @@ const ActiveScreen: FC<IActiveScreenProps> = () => {
             style={{
               marginVertical: 15,
               alignItems: 'center',
-              height: 300,
             }}>
             <Image
               style={{
-                width: '100%',
-                height: '100%',
-                maxHeight: 300,
-                objectFit: 'cover',
+                width: 250,
+                height: 250,
+                objectFit: 'fill',
+                borderRadius: 24,
               }}
               source={{
                 uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png',
@@ -50,7 +49,7 @@ const ActiveScreen: FC<IActiveScreenProps> = () => {
 
           <PositionMeasurer
             handleOutput={({y}) => updateBoxY(y, 'first')}
-            style={tw`flex flex-row items-center rounded-lg py-2 px-1 bg-indigo-300 justify-center gap-1 flex-wrap`}>
+            style={tw`flex flex-row items-center rounded-lg py-2 px-1  justify-center gap-1 flex-wrap`}>
             {splitedWord.map((wordChunk: string, i) => {
               const word =
                 i === 0
@@ -84,7 +83,7 @@ const ActiveScreen: FC<IActiveScreenProps> = () => {
           handleOutput={({y}) => {
             updateBoxY(y, 'second');
           }}
-          style={tw`gap-1 bottom-0 py-2 px-1 rounded-lg bg-indigo-300 flex-wrap justify-center flex-row`}>
+          style={tw`gap-1 bottom-0 py-2 px-1 rounded-lg flex-wrap justify-center flex-row`}>
           {shuffledWord.split('').map((char, i) => (
             <CharButton boxType={'second'} key={i} char={char} index={i} />
           ))}

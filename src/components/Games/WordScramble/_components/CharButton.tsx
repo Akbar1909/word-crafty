@@ -30,26 +30,20 @@ const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
   }, [index, boxType, updateCharsLocation]);
 
   return (
-    <View
+    <Pressable
       ref={viewRef}
       style={[
         {
           width: CHAR_BUTTON_SIZE,
           height: CHAR_BUTTON_SIZE,
-        },
-        tw`bg-indigo-800 rounded-lg`,
-      ]}>
-      <Pressable
-        style={{
-          width: CHAR_BUTTON_SIZE,
-          height: CHAR_BUTTON_SIZE,
           alignItems: 'center',
           justifyContent: 'center',
-        }}
-        onPress={() => handleCharButtonTap({i: index, boxType, char})}>
-        <CharButtonText char={char} />
-      </Pressable>
-    </View>
+        },
+        tw`bg-indigo-800 rounded-lg`,
+      ]}
+      onPress={() => handleCharButtonTap({i: index, boxType, char})}>
+      <CharButtonText char={char} />
+    </Pressable>
   );
 };
 

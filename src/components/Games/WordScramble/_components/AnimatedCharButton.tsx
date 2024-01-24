@@ -17,10 +17,13 @@ interface IAnimatedCharButtonProps {
   org: Position;
   values: Partial<WordScrambleWordState>;
   char: string;
+  elIndex: number;
   handleAnimationCompletion: ({
     values,
+    elIndex,
   }: {
     values: Partial<WordScrambleWordState>;
+    elIndex: number;
   }) => void;
 }
 
@@ -30,6 +33,7 @@ const AnimatedCharButton: FC<IAnimatedCharButtonProps> = ({
   handleAnimationCompletion,
   values,
   char,
+  elIndex,
 }) => {
   const x = useSharedValue(org.x);
   const y = useSharedValue(org.y);
@@ -42,15 +46,16 @@ const AnimatedCharButton: FC<IAnimatedCharButtonProps> = ({
   });
 
   useEffect(() => {
-    x.value = withTiming(target.x, {duration: 200}, () => {
+    x.value = withTiming(target.x, {duration: 100}, () => {
       runOnJS(handleAnimationCompletion)({
         values,
+        elIndex,
       });
     });
-    y.value = withTiming(target.y, {duration: 200});
+    y.value = withTiming(target.y, {duration: 100});
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [target, handleAnimationCompletion, values]);
+  }, [target, handleAnimationCompletion, values, elIndex]);
 
   return (
     <Animated.View

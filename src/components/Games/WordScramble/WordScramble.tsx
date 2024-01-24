@@ -12,11 +12,11 @@ interface WordScrambleProps {
 }
 
 const WordScramble: FC<WordScrambleProps> = ({}) => {
-  const state = useWordScrambleController([{word: 'fed upsomeone'}], 0);
+  const state = useWordScrambleController([{word: 'fedup someone'}], 0);
 
   return (
     <WordScrambleProvider value={state}>
-      <View style={tw`flex-1 p-1 bg-indigo-200`}>
+      <View style={tw`flex-1 p-1 pb-6 bg-indigo-200`}>
         <View style={{height: 40}}>
           <Text>header</Text>
         </View>
