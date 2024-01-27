@@ -53,10 +53,7 @@ const Screens = () => {
           }}>
           {() => (
             <HomeStack.Navigator screenOptions={{headerShown: false}}>
-              <HomeStack.Screen
-                name="HomeScreen"
-                component={WordScrambleScreen}
-              />
+              <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
               <HomeStack.Screen
                 name="WordListDetailsScreen"
                 component={WordListDetailsScreen}

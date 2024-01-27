@@ -138,8 +138,6 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
 
   const [elements, setElements] = useState<any[]>([]);
 
-  const {input, shuffledWord, word, trimmedWord} =
-    state.words[state.selectedWord];
   const firstBoxY = useRef<number>(0);
   const secondBoxY = useRef<number>(0);
 
@@ -149,6 +147,15 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
   });
 
   const {first, second} = locationRef.current;
+
+  const {
+    input,
+    shuffledWord,
+    word,
+    trimmedWord,
+    textWithoutEmptySpace,
+    answerStatus,
+  } = state.words[state.selectedWord];
 
   const updateCharsLocation = ({
     x,
@@ -171,25 +178,35 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
   };
 
   const handleAnimationCompletion = useCallback(
-    ({
-      values,
-      elIndex,
-    }: {
-      values: Partial<WordScrambleWordState>;
-      elIndex: number;
-    }) => {
+    ({values}: {values: Partial<WordScrambleWordState>}) => {
       setElements(prev => {
         const els = [...prev];
         els.shift();
         return els;
       });
 
+      const output = removeEmptySpace(values.input || '');
+      const outputLen = output?.length || -1;
+
       dispatch({
         type: WORD_SCRAMBLE_ACTION_TYPES.SET_NEW_VALUE_TO_WORD_PROPERTY,
-        payload: {...values, word},
+        payload: {
+          ...values,
+          word,
+          ...(output === textWithoutEmptySpace && {
+            answerStatus: 'correct',
+          }),
+          ...(outputLen === textWithoutEmptySpace.length &&
+            output !== textWithoutEmptySpace && {
+              answerStatus: 'error',
+            }),
+          ...(outputLen < textWithoutEmptySpace.length && {
+            answerStatus: 'initial',
+          }),
+        },
       });
     },
-    [word],
+    [word, textWithoutEmptySpace],
   );
 
   const handleFirstBoxTap = ({

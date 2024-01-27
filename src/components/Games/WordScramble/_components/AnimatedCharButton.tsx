@@ -1,9 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import Animated, {
+  ReduceMotion,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming,
+  Easing,
 } from 'react-native-reanimated';
 import React, {FC, useEffect} from 'react';
 import {CHAR_BUTTON_SIZE} from '../constant';
@@ -11,7 +14,7 @@ import {Position} from '../../../../helpers/types';
 import CharButtonText from './CharButtonText';
 import tw from 'twrnc';
 import {WordScrambleWordState} from '../_hooks/useWordScrambleController';
-
+import {INIT_BACK_COLOR} from './CharButton';
 interface IAnimatedCharButtonProps {
   target: Position;
   org: Position;
@@ -20,10 +23,8 @@ interface IAnimatedCharButtonProps {
   elIndex: number;
   handleAnimationCompletion: ({
     values,
-    elIndex,
   }: {
     values: Partial<WordScrambleWordState>;
-    elIndex: number;
   }) => void;
 }
 
@@ -49,10 +50,11 @@ const AnimatedCharButton: FC<IAnimatedCharButtonProps> = ({
     x.value = withTiming(target.x, {duration: 100}, () => {
       runOnJS(handleAnimationCompletion)({
         values,
-        elIndex,
       });
     });
-    y.value = withTiming(target.y, {duration: 100});
+    y.value = withTiming(target.y, {
+      duration: 100,
+    });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, handleAnimationCompletion, values, elIndex]);
@@ -63,9 +65,10 @@ const AnimatedCharButton: FC<IAnimatedCharButtonProps> = ({
         {
           width: CHAR_BUTTON_SIZE,
           height: CHAR_BUTTON_SIZE,
+          backgroundColor: INIT_BACK_COLOR,
         },
         rStyle,
-        tw`absolute bg-indigo-800 items-center rounded-lg justify-center`,
+        tw`absolute items-center rounded-lg justify-center  border-indigo-700`,
       ]}>
       <CharButtonText char={char} />
     </Animated.View>

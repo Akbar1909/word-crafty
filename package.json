@@ -33,6 +33,7 @@
     "react-native-screens": "3.29.0",
     "react-native-svg": "14.1.0",
     "react-native-vector-icons": "10.0.3",
+    "tailwind-merge": "2.2.1",
     "twrnc": "3.6.8",
     "zustand": "4.4.7"
   },

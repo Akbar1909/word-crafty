@@ -10,11 +10,16 @@ export const findSpecialCharIndexes = (str: string, char = ' ') => {
   return output;
 };
 
-export const removeEmptySpace = (input: string) =>
-  input
+export const removeEmptySpace = (input?: string) => {
+  if (!input) {
+    return '';
+  }
+
+  return input
     .split('')
     .filter(char => char.trim())
     .join('');
+};
 
 export const shuffle = (str: string) => {
   let a = str.split(''),

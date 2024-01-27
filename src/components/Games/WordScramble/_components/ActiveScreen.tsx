@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
-import {View, Text, useWindowDimensions, Image} from 'react-native';
+import {View, Text, Image, useWindowDimensions, Pressable} from 'react-native';
 import React, {FC, Fragment} from 'react';
+import {twMerge} from 'tailwind-merge';
 import CharButton from './CharButton';
 import useWordScrambleContext from '../_context/useWordScrambleContext';
 import tw from 'twrnc';
@@ -8,22 +9,25 @@ import PositionMeasurer from '../../../PositionMeasurer';
 
 interface IActiveScreenProps {}
 
-const ActiveScreen: FC<IActiveScreenProps> = () => {
-  const {width, height} = useWindowDimensions();
-
+const ActiveScreen: FC<IActiveScreenProps> = ({}) => {
   const {
-    state: {},
     elements,
     updateBoxY,
-    currentWordState: {emptySpaceIndexes, splitedWord, input, shuffledWord},
+    currentWordState: {
+      emptySpaceIndexes,
+      splitedWord,
+      input,
+      shuffledWord,
+      answerStatus,
+    },
   } = useWordScrambleContext();
 
   return (
     <>
-      <View style={tw`flex flex-1`}>
+      <View style={[tw`flex flex-1`]}>
         <View style={tw`flex-1`}>
           <View>
-            <Text numberOfLines={3} style={{fontSize: 24}}>
+            <Text numberOfLines={3} style={{fontSize: 22}}>
               Lorem Ipsum is simply dummy text of the printing and typesetting
               industry. Lorem Ipsum has been the industry's standard dummy text
               ever since the 1500s,
@@ -36,8 +40,8 @@ const ActiveScreen: FC<IActiveScreenProps> = () => {
             }}>
             <Image
               style={{
-                width: 250,
-                height: 250,
+                width: 255,
+                height: 255,
                 objectFit: 'fill',
                 borderRadius: 24,
               }}
@@ -88,6 +92,12 @@ const ActiveScreen: FC<IActiveScreenProps> = () => {
             <CharButton boxType={'second'} key={i} char={char} index={i} />
           ))}
         </PositionMeasurer>
+
+        <View style={tw`w-full h-10`}>
+          <Pressable>
+            <Text>Next</Text>
+          </Pressable>
+        </View>
       </View>
 
       {elements.map((element, i) => (
