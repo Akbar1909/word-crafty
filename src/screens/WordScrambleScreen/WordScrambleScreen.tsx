@@ -4,10 +4,12 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import WordScramble from '../../components/Games/WordScramble';
 import tw from 'twrnc';
 
-const WordScrambleScreen = () => {
+const WordScrambleScreen = ({route}: any) => {
+  const {listQueryKey} = route.params;
+  console.log({listQueryKey}, 'test');
   return (
     <SafeAreaView edges={['top']} style={tw`flex-1`}>
-      <WordScramble />
+      <WordScramble listQueryKey={listQueryKey} />
     </SafeAreaView>
   );
 };

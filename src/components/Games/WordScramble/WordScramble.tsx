@@ -8,20 +8,26 @@ import tw from 'twrnc';
 import Animated, {useSharedValue, withTiming} from 'react-native-reanimated';
 import FinishWidget from './_components/FinishWidget';
 import Header from './_components/Header';
+import {useNavigation} from '@react-navigation/native';
+import {useQueryClient} from '@tanstack/react-query';
 
 interface WordScrambleProps {
   // input: string;
   // output: string;
   // words: any[];
+  listQueryKey: any;
 }
 
 const words = [{word: 'hello'}, {word: 'test'}];
 
-const WordScramble: FC<WordScrambleProps> = ({}) => {
+const WordScramble: FC<WordScrambleProps> = ({listQueryKey}) => {
   const dimensions = useWindowDimensions();
   const width = useSharedValue(dimensions.width);
   const opacity = useSharedValue(1);
-  const state = useWordScrambleController(words);
+  const queryClient = useQueryClient();
+  const data: any = queryClient.getQueryData(listQueryKey);
+  const preparedWords = Array.isArray(data?.data?.list) ? data?.data?.list : [];
+  const state = useWordScrambleController(preparedWords);
 
   return (
     <WordScrambleProvider value={state}>
@@ -37,11 +43,5 @@ const WordScramble: FC<WordScrambleProps> = ({}) => {
     </WordScrambleProvider>
   );
 };
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-});
 
 export default WordScramble;

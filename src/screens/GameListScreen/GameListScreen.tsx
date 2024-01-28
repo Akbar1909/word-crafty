@@ -5,8 +5,13 @@ import {useNavigation} from '@react-navigation/native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const GameListScreen = () => {
+const GameListScreen = ({route}: any) => {
   const {navigate} = useNavigation();
+  const {
+    params: {listQueryKey},
+  } = route;
+
+  console.log(listQueryKey);
 
   const games = [
     {
@@ -23,7 +28,7 @@ const GameListScreen = () => {
           <TouchableOpacity
             onPress={() => {
               // @ts-ignore
-              navigate('WordScrambleGame');
+              navigate('WordScrambleGame', {listQueryKey});
             }}
             style={tw`h-30 bg-yellow-400 w-full flex-row p-2 rounded-xl`}
             key={id}>

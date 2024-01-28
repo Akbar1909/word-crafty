@@ -10,15 +10,11 @@ import {
 } from '../../../../helpers/common';
 import {useReducer, useRef, useState} from 'react';
 import AnimatedCharButton from '../_components/AnimatedCharButton';
-// import Animated, {
-//   useSharedValue,
-//   useAnimatedStyle,
-//   withSpring,
-// } from 'react-native-reanimated';
-
 import {Position} from '../../../../helpers/types';
+import {WordDefinitionModel} from '../../../../data/word-definition';
 
 export type WordScrambleWordState = {
+  definition: WordDefinitionModel['definition'];
   word: WordModel['word'];
   trimmedWord: string;
   history: any[];
@@ -85,14 +81,19 @@ const prepareHistoryInitialValue = (
     {},
   );
 
-const prepareInitialState = (words: WordModel[]) =>
-  words.reduce((acc = {}, {word}) => {
+type Temp = WordDefinitionModel & {word: string; wordId: number};
+
+const prepareInitialState = (
+  words: Temp[],
+): Record<string, WordScrambleWordState> =>
+  words.reduce((acc = {}, {word, definition}) => {
     const trimmedWord = word.trim();
-    const textWithoutEmptySpace = removeEmptySpace(trimmedWord);
+    const textWithoutEmptySpace = removeEmptySpace(trimmedWord).toLowerCase();
 
     return {
       ...acc,
       [trimmedWord]: {
+        definition,
         word,
         trimmedWord: trimmedWord,
         history: [],
@@ -149,7 +150,7 @@ const reducer = (
 
 let history: Array<{first: number; second: number}> = [];
 
-const useWordScrambleController = (words: WordModel[]) => {
+const useWordScrambleController = (words: Temp[]) => {
   const initialState = useMemo(() => prepareInitialState(words), [words]);
 
   const [state, dispatch] = useReducer(reducer, {
@@ -235,6 +236,8 @@ const useWordScrambleController = (words: WordModel[]) => {
 
       const output = removeEmptySpace(values.input || '');
       const outputLen = output?.length || -1;
+
+      console.log({output, textWithoutEmptySpace});
 
       dispatch({
         type: WORD_SCRAMBLE_ACTION_TYPES.SET_NEW_VALUE_TO_WORD_PROPERTY,

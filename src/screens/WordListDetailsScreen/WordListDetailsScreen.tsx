@@ -79,7 +79,9 @@ const WordListDetailsScreen = ({route}: any) => {
           <MaterialIcons
             onPress={() => {
               // @ts-ignore
-              navigate('GameListScreen');
+              navigate('GameListScreen', {
+                listQueryKey,
+              });
             }}
             name="quiz"
             size={32}

@@ -1,15 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import {Text, View, useWindowDimensions} from 'react-native';
-import React, {FC, useEffect, useRef} from 'react';
+import {View, useWindowDimensions, Image} from 'react-native';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import tw from 'twrnc';
-import {
-  ERROR_COLOR,
-  HEADER_HEIGHT,
-  SUCCESS_COLOR,
-  WARNING_COLOR,
-  WORD_SCRAMBLE_COLORS,
-} from '../constant';
+import {HEADER_HEIGHT, WORD_SCRAMBLE_COLORS} from '../constant';
 import Animated, {
   Easing,
   interpolateColor,
@@ -19,6 +13,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import useWordScrambleContext from '../_context/useWordScrambleContext';
+import {useNavigation} from '@react-navigation/native';
 
 const EMOJI_CONTAINER_WIDTH = 40;
 const FINISH_BUTTON_CONTAINER_WIDTH = 40;
@@ -29,7 +24,12 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({word}) => {
   const stoppedTimer = useRef(false);
-  const timeStatus = useRef<'success' | 'warning' | 'error'>('success');
+  const [gifFilePath, setGifFilePath] = useState(
+    WORD_SCRAMBLE_COLORS.success.gifFilePath,
+  );
+  const [timeStatus, setTimeStatus] = useState<'error' | 'success' | 'warning'>(
+    'success',
+  );
   const {width: SCREEN_WIDTH} = useWindowDimensions();
   const {
     finishGame,
@@ -95,12 +95,14 @@ const Header: FC<HeaderProps> = ({word}) => {
       if (rating < 0.75 && rating > 0.5) {
         color.value = withTiming(0.5);
         bgColor.value = withTiming(0.5);
-        timeStatus.current = 'warning';
+        setTimeStatus('warning');
+        setGifFilePath(WORD_SCRAMBLE_COLORS.warning.gifFilePath);
       } else if (rating < 0.35) {
         color.value = withTiming(0);
         bgColor.value = withTiming(0);
         opacity.value = withRepeat(withTiming(0.8, {duration: 500}), -1);
-        timeStatus.current = 'error';
+        setTimeStatus('error');
+        setGifFilePath(WORD_SCRAMBLE_COLORS.error.gifFilePath);
       }
 
       if ((flooredValue === 0 || flooredValue < 0) && index + 1 === total) {
@@ -125,7 +127,24 @@ const Header: FC<HeaderProps> = ({word}) => {
           tw`h-full bg-green-100 flex items-center justify-center`,
           {width: EMOJI_CONTAINER_WIDTH},
         ]}>
-        <Text style={tw`text-3xl`}>😄</Text>
+        {timeStatus === 'success' && (
+          <Image
+            style={tw`w-full h-full`}
+            source={require('../../../../assets/success.gif')}
+          />
+        )}
+        {timeStatus === 'warning' && (
+          <Image
+            style={tw`w-full h-full`}
+            source={require('../../../../assets/worried.gif')}
+          />
+        )}
+        {timeStatus === 'error' && (
+          <Image
+            style={tw`w-full h-full`}
+            source={require('../../../../assets/worried.gif')}
+          />
+        )}
       </View>
       <Animated.View style={[tw`flex-1`, r1Styles]}>
         <Animated.View
