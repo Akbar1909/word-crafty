@@ -13,7 +13,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import useWordScrambleContext from '../_context/useWordScrambleContext';
-import {useNavigation} from '@react-navigation/native';
 
 const EMOJI_CONTAINER_WIDTH = 40;
 const FINISH_BUTTON_CONTAINER_WIDTH = 40;
@@ -113,7 +112,7 @@ const Header: FC<HeaderProps> = ({word}) => {
       }
 
       if (flooredValue === 0 || flooredValue < 0) {
-        nextWord();
+        // nextWord();
       }
     }, 1000);
 

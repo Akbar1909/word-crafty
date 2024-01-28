@@ -1,11 +1,9 @@
-import {StyleSheet, Text, View, useWindowDimensions} from 'react-native';
-import React, {FC, useEffect} from 'react';
+import {Text, View} from 'react-native';
+import React, {FC} from 'react';
 import tw from 'twrnc';
 import Animated, {
   useAnimatedStyle,
-  useDerivedValue,
   useSharedValue,
-  withTiming,
 } from 'react-native-reanimated';
 
 interface FinishWidgetProps {
@@ -13,7 +11,6 @@ interface FinishWidgetProps {
 }
 
 const FinishWidget: FC<FinishWidgetProps> = ({done}) => {
-  const dimensions = useWindowDimensions();
   const flex = useSharedValue(1);
 
   const rStyles = useAnimatedStyle(() => {
@@ -36,5 +33,3 @@ const FinishWidget: FC<FinishWidgetProps> = ({done}) => {
 };
 
 export default FinishWidget;
-
-const styles = StyleSheet.create({});

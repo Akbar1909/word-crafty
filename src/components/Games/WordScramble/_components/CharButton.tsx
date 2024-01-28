@@ -157,7 +157,11 @@ const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
         tw`bg-indigo-500 rounded-lg`,
         rStyles,
       ]}
-      onPress={() => handleCharButtonTap({i: index, boxType, char})}>
+      onPress={() => {
+        if (answerStatus !== 'correct') {
+          handleCharButtonTap({i: index, boxType, char});
+        }
+      }}>
       <CharButtonText char={char} />
     </AnimatedPressable>
   );

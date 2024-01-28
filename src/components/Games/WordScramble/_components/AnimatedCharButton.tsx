@@ -1,12 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 import Animated, {
-  ReduceMotion,
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
-  withSpring,
   withTiming,
-  Easing,
 } from 'react-native-reanimated';
 import React, {FC, useEffect} from 'react';
 import {CHAR_BUTTON_SIZE} from '../constant';
