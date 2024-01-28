@@ -8,6 +8,7 @@ import {
   HEADER_HEIGHT,
   SUCCESS_COLOR,
   WARNING_COLOR,
+  WORD_SCRAMBLE_COLORS,
 } from '../constant';
 import Animated, {
   Easing,
@@ -28,6 +29,7 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({word}) => {
   const stoppedTimer = useRef(false);
+  const timeStatus = useRef<'success' | 'warning' | 'error'>('success');
   const {width: SCREEN_WIDTH} = useWindowDimensions();
   const {
     finishGame,
@@ -40,17 +42,34 @@ const Header: FC<HeaderProps> = ({word}) => {
   const STEPPER = TIME_CONTAINER_WIDTH / 20;
 
   const width = useSharedValue(TIME_CONTAINER_WIDTH);
+  const color = useSharedValue(1);
   const bgColor = useSharedValue(1);
   const opacity = useSharedValue(1);
 
   const rStyles = useAnimatedStyle(() => ({
     width: width.value,
     backgroundColor: interpolateColor(
-      bgColor.value,
+      color.value,
       [0, 0.5, 1],
-      [ERROR_COLOR, WARNING_COLOR, SUCCESS_COLOR],
+      [
+        WORD_SCRAMBLE_COLORS.error.color,
+        WORD_SCRAMBLE_COLORS.warning.color,
+        WORD_SCRAMBLE_COLORS.success.color,
+      ],
     ),
     opacity: opacity.value,
+  }));
+
+  const r1Styles = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      bgColor.value,
+      [0, 0.5, 1],
+      [
+        WORD_SCRAMBLE_COLORS.error.bg,
+        WORD_SCRAMBLE_COLORS.warning.bg,
+        WORD_SCRAMBLE_COLORS.success.bg,
+      ],
+    ),
   }));
 
   useEffect(() => {
@@ -74,10 +93,14 @@ const Header: FC<HeaderProps> = ({word}) => {
       const rating = width.value / TIME_CONTAINER_WIDTH;
 
       if (rating < 0.75 && rating > 0.5) {
+        color.value = withTiming(0.5);
         bgColor.value = withTiming(0.5);
+        timeStatus.current = 'warning';
       } else if (rating < 0.35) {
+        color.value = withTiming(0);
         bgColor.value = withTiming(0);
         opacity.value = withRepeat(withTiming(0.8, {duration: 500}), -1);
+        timeStatus.current = 'error';
       }
 
       if ((flooredValue === 0 || flooredValue < 0) && index + 1 === total) {
@@ -104,11 +127,11 @@ const Header: FC<HeaderProps> = ({word}) => {
         ]}>
         <Text style={tw`text-3xl`}>😄</Text>
       </View>
-      <View style={tw`flex-1 bg-gray-400`}>
+      <Animated.View style={[tw`flex-1`, r1Styles]}>
         <Animated.View
           style={[tw`bg-blue-300 `, {height: HEADER_HEIGHT}, rStyles]}
         />
-      </View>
+      </Animated.View>
       <View
         style={[
           tw`w-[10] h-full bg-green-100`,

@@ -1,21 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {FC, useCallback, useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  useWindowDimensions,
-} from 'react-native';
+import {View, StyleSheet, useWindowDimensions} from 'react-native';
 import ActiveScreen from './_components/ActiveScreen';
-import useWordScrambleController, {
-  WORD_SCRAMBLE_ACTION_TYPES,
-} from './_hooks/useWordScrambleController';
+import useWordScrambleController from './_hooks/useWordScrambleController';
 import WordScrambleProvider from './_context/WordScrambleContext';
 import tw from 'twrnc';
 import Animated, {useSharedValue, withTiming} from 'react-native-reanimated';
 import FinishWidget from './_components/FinishWidget';
-import {HEADER_HEIGHT} from './constant';
 import Header from './_components/Header';
 
 interface WordScrambleProps {
@@ -34,8 +25,7 @@ const WordScramble: FC<WordScrambleProps> = ({}) => {
 
   return (
     <WordScrambleProvider value={state}>
-      <Text>{state.state.index}</Text>
-      <Header word={''} key={state.state.index} />
+      {!state.state.done && <Header word={''} key={state.state.index} />}
       <View style={tw`flex-1 bg-indigo-200`}>
         {!state.state.done && (
           <Animated.View style={[tw`flex flex-1`, {width, opacity}]}>
