@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, {useCallback, useMemo} from 'react';
+import React, {useReducer, useRef, useState, useCallback, useMemo} from 'react';
 import {WordModel} from '../../../../data/word';
 import {
   findSpecialCharIndexes,
@@ -8,7 +8,6 @@ import {
   replaceAt,
   shuffle,
 } from '../../../../helpers/common';
-import {useReducer, useRef, useState} from 'react';
 import AnimatedCharButton from '../_components/AnimatedCharButton';
 import {Position} from '../../../../helpers/types';
 import {WordDefinitionModel} from '../../../../data/word-definition';
@@ -24,7 +23,7 @@ export type WordScrambleWordState = {
   textWithoutEmptySpace: string;
   shuffledWord: string;
   input: string;
-  answerStatus: 'initial' | 'correct' | 'error';
+  answerStatus: 'initial' | 'correct' | 'error' | 'touched' | 'dirty';
   dirty: boolean;
   splitedWord: string[];
 };
@@ -148,8 +147,6 @@ const reducer = (
   }
 };
 
-let history: Array<{first: number; second: number}> = [];
-
 const useWordScrambleController = (words: Temp[]) => {
   const initialState = useMemo(() => prepareInitialState(words), [words]);
 
@@ -161,6 +158,20 @@ const useWordScrambleController = (words: Temp[]) => {
     done: false,
   });
 
+  const {index, words: preparedWords} = state;
+
+  const output = Object.values(preparedWords).reduce(
+    (acc, cur) => ({
+      ...acc,
+      // @ts-ignore
+      [cur.answerStatus]: Array.isArray(acc?.answerStatus)
+        ? // @ts-ignore
+          [...acc.answerStatus, cur]
+        : [cur],
+    }),
+    {} as Record<string, WordScrambleWordState[]>,
+  );
+
   const {
     input,
     shuffledWord,
@@ -170,7 +181,7 @@ const useWordScrambleController = (words: Temp[]) => {
     answerStatus,
   } = state.words[state.selectedWord];
 
-  const {index} = state;
+  const history = useRef<Array<{first: number; second: number}>>([]);
 
   const inputHistory = useRef<Record<string, string[]>>(
     prepareHistoryInitialValue(initialState),
@@ -192,19 +203,18 @@ const useWordScrambleController = (words: Temp[]) => {
 
   const {first, second} = locationRef.current;
 
-  const nextWord = useCallback(
-    () =>
-      dispatch({
-        type: WORD_SCRAMBLE_ACTION_TYPES.NEXT_WORD,
-        payload: words[index + 1].word,
-      }),
-    [words, index],
-  );
+  const nextWord = useCallback(() => {
+    history.current = [];
+    dispatch({
+      type: WORD_SCRAMBLE_ACTION_TYPES.NEXT_WORD,
+      payload: words[index + 1].word,
+    });
+  }, [words, index]);
 
-  const finishGame = useCallback(
-    () => dispatch({type: WORD_SCRAMBLE_ACTION_TYPES.FINISH_GAME}),
-    [],
-  );
+  const finishGame = useCallback(() => {
+    history.current = [];
+    dispatch({type: WORD_SCRAMBLE_ACTION_TYPES.FINISH_GAME});
+  }, []);
 
   const updateCharsLocation = ({
     x,
@@ -236,8 +246,6 @@ const useWordScrambleController = (words: Temp[]) => {
 
       const output = removeEmptySpace(values.input || '');
       const outputLen = output?.length || -1;
-
-      console.log({output, textWithoutEmptySpace});
 
       dispatch({
         type: WORD_SCRAMBLE_ACTION_TYPES.SET_NEW_VALUE_TO_WORD_PROPERTY,
@@ -272,10 +280,10 @@ const useWordScrambleController = (words: Temp[]) => {
     const lastNewShuffledWord = shuffledWordHistory.current[trimmedWord].at(
       -1,
     ) as string;
-    const targetIndex = history.find(({first}) => first === orgIndex)
+    const targetIndex = history.current.find(({first}) => first === orgIndex)
       ?.second as number;
 
-    history = history.filter(({first}) => first !== orgIndex);
+    history.current = history.current.filter(({first}) => first !== orgIndex);
 
     const targetPosition = {
       ...second[targetIndex],
@@ -325,7 +333,7 @@ const useWordScrambleController = (words: Temp[]) => {
       y: firstBoxY.current + first[targetIndex].y,
     };
 
-    history.push({first: targetIndex, second: orgIndex});
+    history.current.push({first: targetIndex, second: orgIndex});
 
     const newShuffledWord = replaceAt(shuffledWord, ' ', orgIndex);
 
@@ -391,6 +399,7 @@ const useWordScrambleController = (words: Temp[]) => {
     updateBoxY,
     nextWord,
     finishGame,
+    output,
   };
 };
 

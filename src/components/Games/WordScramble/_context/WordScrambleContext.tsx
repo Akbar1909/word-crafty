@@ -21,6 +21,7 @@ export const WordScrambleContext = createContext<
   updateBoxY: '' as any,
   nextWord: () => {},
   finishGame: () => {},
+  output: {},
 });
 
 const WordScrambleProvider: FC<{

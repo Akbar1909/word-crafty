@@ -44,13 +44,13 @@ const AnimatedCharButton: FC<IAnimatedCharButtonProps> = ({
   });
 
   useEffect(() => {
-    x.value = withTiming(target.x, {duration: 100}, () => {
+    x.value = withTiming(target.x, {duration: 50}, () => {
       runOnJS(handleAnimationCompletion)({
         values,
       });
     });
     y.value = withTiming(target.y, {
-      duration: 100,
+      duration: 50,
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

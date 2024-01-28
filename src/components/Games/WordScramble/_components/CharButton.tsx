@@ -25,8 +25,8 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export const INIT_BACK_COLOR = '#8B5CF6';
 export const INIT_BORDER_COLOR = '#6D27D9';
-const PRESSED_BACK_COLOR = '#D1D5DA';
-const PRESSED_BORDER_COLOR = '#6A7280';
+const PRESSED_BACK_COLOR = '#a78bfacc';
+const PRESSED_BORDER_COLOR = '#a78bfa';
 const CORRECT_BACK_COLOR = '#11B981';
 const CORRECT_BORDER_COLOR = '#069668';
 const ERROR_BACK_COLOR = '#F77171';

@@ -13,6 +13,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import useWordScrambleContext from '../_context/useWordScrambleContext';
+import {WORD_SCRAMBLE_ACTION_TYPES} from '../_hooks/useWordScrambleController';
 
 const EMOJI_CONTAINER_WIDTH = 40;
 const FINISH_BUTTON_CONTAINER_WIDTH = 40;
@@ -21,7 +22,13 @@ interface HeaderProps {
   word: string;
 }
 
-const Header: FC<HeaderProps> = ({word}) => {
+const Header: FC<HeaderProps> = () => {
+  const {
+    currentWordState: {word},
+    dispatch,
+    output,
+  } = useWordScrambleContext();
+
   const stoppedTimer = useRef(false);
   const [gifFilePath, setGifFilePath] = useState(
     WORD_SCRAMBLE_COLORS.success.gifFilePath,
@@ -38,7 +45,7 @@ const Header: FC<HeaderProps> = ({word}) => {
 
   const TIME_CONTAINER_WIDTH =
     SCREEN_WIDTH - EMOJI_CONTAINER_WIDTH - FINISH_BUTTON_CONTAINER_WIDTH;
-  const STEPPER = TIME_CONTAINER_WIDTH / 20;
+  const STEPPER = TIME_CONTAINER_WIDTH / 15;
 
   const width = useSharedValue(TIME_CONTAINER_WIDTH);
   const color = useSharedValue(1);
@@ -112,7 +119,11 @@ const Header: FC<HeaderProps> = ({word}) => {
       }
 
       if (flooredValue === 0 || flooredValue < 0) {
-        // nextWord();
+        dispatch({
+          type: WORD_SCRAMBLE_ACTION_TYPES.SET_NEW_VALUE_TO_WORD_PROPERTY,
+          payload: {word, answerStatus: 'dirty'},
+        });
+        nextWord();
       }
     }, 1000);
 

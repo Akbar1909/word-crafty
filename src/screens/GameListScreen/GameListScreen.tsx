@@ -11,8 +11,6 @@ const GameListScreen = ({route}: any) => {
     params: {listQueryKey},
   } = route;
 
-  console.log(listQueryKey);
-
   const games = [
     {
       id: 1,

@@ -5,8 +5,7 @@ import WordScramble from '../../components/Games/WordScramble';
 import tw from 'twrnc';
 
 const WordScrambleScreen = ({route}: any) => {
-  const {listQueryKey} = route.params;
-  console.log({listQueryKey}, 'test');
+  const {listQueryKey} = route.params || {listQueryKey: ''};
   return (
     <SafeAreaView edges={['top']} style={tw`flex-1`}>
       <WordScramble listQueryKey={listQueryKey} />

@@ -38,7 +38,7 @@ const Screens = () => {
 
           tabBarStyle: {backgroundColor: MyTheme.colors.PRIMARY.main},
         }}
-        initialRouteName="Home">
+        initialRouteName="WordScrambleGame">
         <Tab.Screen
           name={'Home'}
           options={{
@@ -53,7 +53,10 @@ const Screens = () => {
           }}>
           {() => (
             <HomeStack.Navigator screenOptions={{headerShown: false}}>
-              <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+              <HomeStack.Screen
+                name="HomeScreen"
+                component={WordScrambleScreen}
+              />
               <HomeStack.Screen
                 name="WordListDetailsScreen"
                 component={WordListDetailsScreen}
