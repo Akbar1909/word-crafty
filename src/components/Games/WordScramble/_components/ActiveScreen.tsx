@@ -6,6 +6,7 @@ import CharButton from './CharButton';
 import useWordScrambleContext from '../_context/useWordScrambleContext';
 import tw from 'twrnc';
 import PositionMeasurer from '../../../PositionMeasurer';
+import CelebrationWidget from './CelebrationWidget';
 
 interface IActiveScreenProps {}
 
@@ -13,6 +14,9 @@ const ActiveScreen: FC<IActiveScreenProps> = ({}) => {
   const {
     elements,
     updateBoxY,
+    nextWord,
+    state: {total, index},
+    finishGame,
     currentWordState: {
       emptySpaceIndexes,
       splitedWord,
@@ -21,6 +25,8 @@ const ActiveScreen: FC<IActiveScreenProps> = ({}) => {
       answerStatus,
     },
   } = useWordScrambleContext();
+
+  // return <CelebrationWidget />;
 
   return (
     <>
@@ -40,8 +46,8 @@ const ActiveScreen: FC<IActiveScreenProps> = ({}) => {
             }}>
             <Image
               style={{
-                width: 255,
-                height: 255,
+                width: 260,
+                height: 260,
                 objectFit: 'fill',
                 borderRadius: 24,
               }}
@@ -83,21 +89,38 @@ const ActiveScreen: FC<IActiveScreenProps> = ({}) => {
             })}
           </PositionMeasurer>
         </View>
-        <PositionMeasurer
-          handleOutput={({y}) => {
-            updateBoxY(y, 'second');
-          }}
-          style={tw`gap-1 bottom-0 py-2 px-1 rounded-lg flex-wrap justify-center flex-row`}>
-          {shuffledWord.split('').map((char, i) => (
-            <CharButton boxType={'second'} key={i} char={char} index={i} />
-          ))}
-        </PositionMeasurer>
 
-        <View style={tw`w-full h-10`}>
-          <Pressable>
-            <Text>Next</Text>
-          </Pressable>
-        </View>
+        {answerStatus !== 'correct' && (
+          <PositionMeasurer
+            handleOutput={({y}) => {
+              updateBoxY(y, 'second');
+            }}
+            style={tw`gap-1 bottom-0 py-2 px-1 rounded-lg flex-wrap justify-center flex-row`}>
+            {shuffledWord.split('').map((char, i) => (
+              <CharButton boxType={'second'} key={i} char={char} index={i} />
+            ))}
+          </PositionMeasurer>
+        )}
+
+        {answerStatus === 'correct' && total === index + 1 && (
+          <View style={tw`w-full h-10`}>
+            <Pressable
+              onPress={finishGame}
+              style={tw`py-2 px-3 bg-yellow-600 rounded-lg w-15 flex items-center justify-center`}>
+              <Text style={tw`text-white font-bold`}>Finish</Text>
+            </Pressable>
+          </View>
+        )}
+
+        {answerStatus === 'correct' && total > index + 1 && (
+          <View style={tw`w-full h-10`}>
+            <Pressable
+              onPress={nextWord}
+              style={tw`py-2 px-3 bg-yellow-600 rounded-lg w-15 flex items-center justify-center`}>
+              <Text style={tw`text-white font-bold`}>Next</Text>
+            </Pressable>
+          </View>
+        )}
       </View>
 
       {elements.map((element, i) => (

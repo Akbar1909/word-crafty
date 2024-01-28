@@ -9,6 +9,9 @@ export const WordScrambleContext = createContext<
   state: {
     selectedWord: '',
     words: {},
+    index: 0,
+    total: 0,
+    done: false,
   },
   currentWordState: {} as WordScrambleWordState,
   dispatch: '' as any,
@@ -16,6 +19,8 @@ export const WordScrambleContext = createContext<
   updateCharsLocation: '' as any,
   elements: [],
   updateBoxY: '' as any,
+  nextWord: () => {},
+  finishGame: () => {},
 });
 
 const WordScrambleProvider: FC<{

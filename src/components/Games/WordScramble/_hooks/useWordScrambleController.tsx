@@ -38,16 +38,31 @@ export type BoxType = 'first' | 'second';
 export type WordScrambleControllerStateType = {
   selectedWord: string;
   words: Record<string, WordScrambleWordState>;
+  index: number;
+  total: number;
+  done: boolean;
 };
 
 export enum WORD_SCRAMBLE_ACTION_TYPES {
   SET_SELECTED_WORD = 'setSelectedWord',
   SET_NEW_VALUE_TO_WORD_PROPERTY = 'setNewValueToWordProperty',
+  NEXT_WORD = 'nextWord',
+  PREV_INDEX = 'prevIndex',
+  FINISH_GAME = 'finishGame',
 }
 
 type SetSelectedWordAction = {
   type: WORD_SCRAMBLE_ACTION_TYPES.SET_SELECTED_WORD;
   payload: string;
+};
+
+type NextWordAction = {
+  type: WORD_SCRAMBLE_ACTION_TYPES.NEXT_WORD;
+  payload: string;
+};
+
+type FinishGame = {
+  type: WORD_SCRAMBLE_ACTION_TYPES.FINISH_GAME;
 };
 
 type SetNewValueToWordPropertyAction = {
@@ -57,7 +72,9 @@ type SetNewValueToWordPropertyAction = {
 
 export type WordScrambleActions =
   | SetNewValueToWordPropertyAction
-  | SetSelectedWordAction;
+  | SetSelectedWordAction
+  | NextWordAction
+  | FinishGame;
 
 const prepareHistoryInitialValue = (
   initialState: Record<string, WordScrambleWordState>,
@@ -94,6 +111,7 @@ const prepareInitialState = (words: WordModel[]) =>
 
 const reducer = (
   state: WordScrambleControllerStateType,
+  // @ts-ignore
   {type, payload}: WordScrambleActions,
 ) => {
   switch (type) {
@@ -113,6 +131,17 @@ const reducer = (
           },
         },
       };
+    case WORD_SCRAMBLE_ACTION_TYPES.NEXT_WORD:
+      return {
+        ...state,
+        selectedWord: payload.trim(),
+        index: state.index + 1,
+      };
+    case WORD_SCRAMBLE_ACTION_TYPES.FINISH_GAME:
+      return {
+        ...state,
+        done: true,
+      };
     default:
       return state;
   }
@@ -120,13 +149,27 @@ const reducer = (
 
 let history: Array<{first: number; second: number}> = [];
 
-const useWordScrambleController = (words: WordModel[], index: number) => {
+const useWordScrambleController = (words: WordModel[]) => {
   const initialState = useMemo(() => prepareInitialState(words), [words]);
 
   const [state, dispatch] = useReducer(reducer, {
     words: initialState,
-    selectedWord: words[index].word.trim(),
+    selectedWord: words[0].word.trim(),
+    index: 0,
+    total: words.length,
+    done: false,
   });
+
+  const {
+    input,
+    shuffledWord,
+    word,
+    trimmedWord,
+    textWithoutEmptySpace,
+    answerStatus,
+  } = state.words[state.selectedWord];
+
+  const {index} = state;
 
   const inputHistory = useRef<Record<string, string[]>>(
     prepareHistoryInitialValue(initialState),
@@ -148,14 +191,19 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
 
   const {first, second} = locationRef.current;
 
-  const {
-    input,
-    shuffledWord,
-    word,
-    trimmedWord,
-    textWithoutEmptySpace,
-    answerStatus,
-  } = state.words[state.selectedWord];
+  const nextWord = useCallback(
+    () =>
+      dispatch({
+        type: WORD_SCRAMBLE_ACTION_TYPES.NEXT_WORD,
+        payload: words[index + 1].word,
+      }),
+    [words, index],
+  );
+
+  const finishGame = useCallback(
+    () => dispatch({type: WORD_SCRAMBLE_ACTION_TYPES.FINISH_GAME}),
+    [],
+  );
 
   const updateCharsLocation = ({
     x,
@@ -338,6 +386,8 @@ const useWordScrambleController = (words: WordModel[], index: number) => {
     updateCharsLocation,
     elements,
     updateBoxY,
+    nextWord,
+    finishGame,
   };
 };
 
