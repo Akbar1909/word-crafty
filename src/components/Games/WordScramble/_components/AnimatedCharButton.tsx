@@ -3,6 +3,7 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import React, {FC, useEffect} from 'react';
@@ -11,7 +12,7 @@ import {Position} from '../../../../helpers/types';
 import CharButtonText from './CharButtonText';
 import tw from 'twrnc';
 import {WordScrambleWordState} from '../_hooks/useWordScrambleController';
-import {INIT_BACK_COLOR} from './CharButton';
+import {INIT_BACK_COLOR, INIT_BORDER_COLOR} from './CharButton';
 interface IAnimatedCharButtonProps {
   target: Position;
   org: Position;
@@ -20,8 +21,10 @@ interface IAnimatedCharButtonProps {
   elIndex: number;
   handleAnimationCompletion: ({
     values,
+    index,
   }: {
     values: Partial<WordScrambleWordState>;
+    index: number;
   }) => void;
 }
 
@@ -33,25 +36,26 @@ const AnimatedCharButton: FC<IAnimatedCharButtonProps> = ({
   char,
   elIndex,
 }) => {
-  const x = useSharedValue(org.x);
-  const y = useSharedValue(org.y);
+  const position = useSharedValue({x: org.x, y: org.y});
 
   const rStyle = useAnimatedStyle(() => {
     return {
-      top: y.value,
-      left: x.value,
+      top: position.value.y,
+      left: position.value.x,
     };
   });
 
   useEffect(() => {
-    x.value = withTiming(target.x, {duration: 50}, () => {
-      runOnJS(handleAnimationCompletion)({
-        values,
-      });
-    });
-    y.value = withTiming(target.y, {
-      duration: 50,
-    });
+    position.value = withTiming(
+      {x: target.x, y: target.y},
+      {duration: 100},
+      () => {
+        runOnJS(handleAnimationCompletion)({
+          values,
+          index: elIndex,
+        });
+      },
+    );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target, handleAnimationCompletion, values, elIndex]);
@@ -63,9 +67,11 @@ const AnimatedCharButton: FC<IAnimatedCharButtonProps> = ({
           width: CHAR_BUTTON_SIZE,
           height: CHAR_BUTTON_SIZE,
           backgroundColor: INIT_BACK_COLOR,
+          borderWidth: 2,
+          borderColor: INIT_BORDER_COLOR,
         },
         rStyle,
-        tw`absolute items-center rounded-lg justify-center  border-indigo-700`,
+        tw`absolute items-center rounded-lg justify-center`,
       ]}>
       <CharButtonText char={char} />
     </Animated.View>

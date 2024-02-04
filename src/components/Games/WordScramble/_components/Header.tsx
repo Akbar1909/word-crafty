@@ -26,13 +26,9 @@ const Header: FC<HeaderProps> = () => {
   const {
     currentWordState: {word},
     dispatch,
-    output,
   } = useWordScrambleContext();
 
   const stoppedTimer = useRef(false);
-  const [gifFilePath, setGifFilePath] = useState(
-    WORD_SCRAMBLE_COLORS.success.gifFilePath,
-  );
   const [timeStatus, setTimeStatus] = useState<'error' | 'success' | 'warning'>(
     'success',
   );
@@ -102,13 +98,11 @@ const Header: FC<HeaderProps> = () => {
         color.value = withTiming(0.5);
         bgColor.value = withTiming(0.5);
         setTimeStatus('warning');
-        setGifFilePath(WORD_SCRAMBLE_COLORS.warning.gifFilePath);
       } else if (rating < 0.35) {
         color.value = withTiming(0);
         bgColor.value = withTiming(0);
         opacity.value = withRepeat(withTiming(0.8, {duration: 500}), -1);
         setTimeStatus('error');
-        setGifFilePath(WORD_SCRAMBLE_COLORS.error.gifFilePath);
       }
 
       if ((flooredValue === 0 || flooredValue < 0) && index + 1 === total) {
@@ -121,7 +115,7 @@ const Header: FC<HeaderProps> = () => {
       if (flooredValue === 0 || flooredValue < 0) {
         dispatch({
           type: WORD_SCRAMBLE_ACTION_TYPES.SET_NEW_VALUE_TO_WORD_PROPERTY,
-          payload: {word, answerStatus: 'dirty'},
+          payload: {word, answerStatus: 'touched'},
         });
         nextWord();
       }

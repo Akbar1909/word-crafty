@@ -1,21 +1,30 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
+import tw from 'twrnc';
 import {useNavigation} from '@react-navigation/native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 interface ViewAllWidgetProps {
   title: string;
-  to: string;
+  type: string;
 }
 
-export default function ViewAllWidget({title, to}: ViewAllWidgetProps) {
-  const navigate = useNavigation();
+export default function ViewAllWidget({title, type}: ViewAllWidgetProps) {
+  const {navigate} = useNavigation();
 
   return (
     <View style={styles.root}>
       <Text style={styles.title}>{title}</Text>
-      <View style={styles.allBadge}>
-        <Text style={{color: 'white'}}>All</Text>
-      </View>
+      {/* <TouchableOpacity
+        onPress={() => {
+          // @ts-ignore
+          navigate('WordListsScreen', {
+            type,
+          });
+        }}
+        style={styles.allBadge}>
+        <Text style={tw`text-white`}>All</Text>
+      </TouchableOpacity> */}
     </View>
   );
 }

@@ -16,6 +16,7 @@ import {useAuth} from './providers/AuthProvider';
 import WordListDetailsScreen from './screens/WordListDetailsScreen';
 import GameListScreen from './screens/GameListScreen';
 import WordScrambleScreen from './screens/WordScrambleScreen';
+import WordListsScreen from './screens/WordListsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -53,9 +54,10 @@ const Screens = () => {
           }}>
           {() => (
             <HomeStack.Navigator screenOptions={{headerShown: false}}>
+              <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
               <HomeStack.Screen
-                name="HomeScreen"
-                component={WordScrambleScreen}
+                name="WordListsScreen"
+                component={WordListsScreen}
               />
               <HomeStack.Screen
                 name="WordListDetailsScreen"

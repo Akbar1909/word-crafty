@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, forwardRef, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text} from 'react-native';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {BottomSheetModal, BottomSheetFlatList} from '@gorhom/bottom-sheet';
 import useGetWordLists from '../../hooks/api/useGetWordLists';
@@ -18,7 +18,7 @@ const ChooseWordListBottomSheet = forwardRef(
     const queryClient = useQueryClient();
     const [pressedId, setPressedId] = useState<number | null>(null);
 
-    const {array} = useGetWordLists();
+    const {mineWordLists} = useGetWordLists();
 
     const {mutate, isPending} = useMutation({
       mutationFn: toggleDefinitionToWordList,
@@ -71,7 +71,7 @@ const ChooseWordListBottomSheet = forwardRef(
         <>
           <Text style={tw`text-xl font-medium`}>Choose a word list</Text>
           <BottomSheetFlatList
-            data={array}
+            data={mineWordLists}
             keyExtractor={item => String(item.wordListId)}
             renderItem={renderItem}
             numColumns={3}

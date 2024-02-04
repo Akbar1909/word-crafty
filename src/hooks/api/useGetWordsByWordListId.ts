@@ -16,8 +16,8 @@ const useGetWordsByWordListId = (wordListId: number) => {
     WordDefinitionModel & {word: string; wordId: number}
   > = useMemo(
     () =>
-      Array.isArray(data?.list)
-        ? data.list.reduce((acc: any, cur: any) => {
+      Array.isArray(data)
+        ? data.reduce((acc: any, cur: any) => {
             return acc.set(cur.definitionId, cur);
           }, new Map())
         : new Map(),

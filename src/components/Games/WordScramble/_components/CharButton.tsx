@@ -11,6 +11,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
+  withSequence,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
@@ -44,6 +45,7 @@ const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
   const bgColor = useSharedValue(0);
   const borderColor = useSharedValue(0);
   const scale = useSharedValue(1);
+  const rotate = useSharedValue(0);
 
   const rStyles = useAnimatedStyle(() => {
     return {
@@ -51,20 +53,13 @@ const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
         {translateY: translateY.value},
         {scaleX: scale.value},
         {scaleY: scale.value},
+        {rotate: `${rotate.value}deg`},
       ],
       elevation: elevation.value,
       shadowOffset: {width: 0, height: elevation.value},
-      backgroundColor: interpolateColor(
-        bgColor.value,
-        [0, 1],
-        [INIT_BACK_COLOR, PRESSED_BACK_COLOR],
-      ),
+      backgroundColor: INIT_BACK_COLOR,
       borderWidth: 2,
-      borderColor: interpolateColor(
-        borderColor.value,
-        [0, 1],
-        [INIT_BORDER_COLOR, PRESSED_BORDER_COLOR],
-      ),
+      borderColor: INIT_BORDER_COLOR,
       ...(answerStatus === 'correct' &&
         boxType === 'first' && {
           backgroundColor: interpolateColor(
@@ -94,18 +89,12 @@ const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
     };
   });
   const handlePressIn = () => {
-    elevation.value = withSpring(2, {duration: 30});
-    translateY.value = withSpring(2, {duration: 30});
-    bgColor.value = 1;
-    borderColor.value = 1;
+    scale.value = withTiming(1.2);
   };
 
   const handlePressOut = useCallback(() => {
-    elevation.value = withSpring(4, {duration: 30});
-    translateY.value = withSpring(0, {duration: 30});
-    bgColor.value = 0;
-    borderColor.value = 0;
-  }, [elevation, translateY, bgColor, borderColor]);
+    scale.value = withTiming(1);
+  }, [scale]);
 
   useEffect(() => {
     if (boxType === 'second') {
@@ -116,7 +105,7 @@ const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
       scale.value = withDelay(index * 30, withTiming(1.07));
       bgColor.value = withDelay(index * 30, withTiming(1));
       borderColor.value = withDelay(index * 30, withTiming(1));
-    } else if (answerStatus === 'initial') {
+    } else if (answerStatus === 'touched') {
       scale.value = withDelay(index * 30, withTiming(1.07));
       bgColor.value = withDelay(index * 30, withTiming(0));
       borderColor.value = withDelay(index * 30, withTiming(0));
@@ -130,6 +119,13 @@ const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
     borderColor,
     handlePressOut,
   ]);
+
+  useEffect(() => {
+    if (boxType === 'first' && char.trim()) {
+      scale.value = withSequence(withTiming(1.5), withTiming(1));
+      rotate.value = withSequence(withTiming(40), withTiming(0));
+    }
+  }, [char, boxType, scale, rotate]);
 
   useEffect(() => {
     if (!viewRef.current) {

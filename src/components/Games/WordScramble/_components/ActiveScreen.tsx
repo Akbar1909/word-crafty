@@ -1,10 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
-import {View, Text, Image, Pressable} from 'react-native';
+import {View, Text, Pressable} from 'react-native';
 import React, {FC, Fragment} from 'react';
 import CharButton from './CharButton';
 import useWordScrambleContext from '../_context/useWordScrambleContext';
 import tw from 'twrnc';
 import PositionMeasurer from '../../../PositionMeasurer';
+import {REACT_APP_SERVER_BASE_URL} from '@env';
+import FastImage from 'react-native-fast-image';
 
 interface IActiveScreenProps {}
 
@@ -22,6 +24,7 @@ const ActiveScreen: FC<IActiveScreenProps> = ({}) => {
       shuffledWord,
       answerStatus,
       definition,
+      images,
     },
   } = useWordScrambleContext();
 
@@ -41,17 +44,20 @@ const ActiveScreen: FC<IActiveScreenProps> = ({}) => {
               marginVertical: 15,
               alignItems: 'center',
             }}>
-            <Image
-              style={{
-                width: 260,
-                height: 260,
-                objectFit: 'fill',
-                borderRadius: 24,
-              }}
-              source={{
-                uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png',
-              }}
-            />
+            {images.length >= 1 && (
+              <FastImage
+                source={{
+                  uri: `${REACT_APP_SERVER_BASE_URL}/files/serve/${images[0].filename}`,
+                  priority: FastImage.priority.high,
+                }}
+                style={{
+                  width: 260,
+                  height: 260,
+                  margin: 'auto',
+                  borderRadius: 24,
+                }}
+              />
+            )}
           </View>
 
           <PositionMeasurer

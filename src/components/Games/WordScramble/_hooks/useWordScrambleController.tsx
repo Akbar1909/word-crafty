@@ -11,6 +11,7 @@ import {
 import AnimatedCharButton from '../_components/AnimatedCharButton';
 import {Position} from '../../../../helpers/types';
 import {WordDefinitionModel} from '../../../../data/word-definition';
+import {MediaModel} from '../../../../data/media';
 
 export type WordScrambleWordState = {
   definition: WordDefinitionModel['definition'];
@@ -23,9 +24,10 @@ export type WordScrambleWordState = {
   textWithoutEmptySpace: string;
   shuffledWord: string;
   input: string;
-  answerStatus: 'initial' | 'correct' | 'error' | 'touched' | 'dirty';
+  answerStatus: 'correct' | 'error' | 'touched';
   dirty: boolean;
   splitedWord: string[];
+  images: MediaModel[];
 };
 
 export type BoxType = 'first' | 'second';
@@ -85,7 +87,7 @@ type Temp = WordDefinitionModel & {word: string; wordId: number};
 const prepareInitialState = (
   words: Temp[],
 ): Record<string, WordScrambleWordState> =>
-  words.reduce((acc = {}, {word, definition}) => {
+  words.reduce((acc = {}, {word, definition, examples}) => {
     const trimmedWord = word.trim();
     const textWithoutEmptySpace = removeEmptySpace(trimmedWord).toLowerCase();
 
@@ -102,9 +104,10 @@ const prepareInitialState = (
         textWithoutEmptySpace,
         shuffledWord: shuffle(textWithoutEmptySpace),
         input: ' '.repeat(word.length),
-        answerStatus: 'initial',
+        answerStatus: 'touched',
         dirty: false,
         splitedWord: word.split(' '),
+        images: examples?.[0].images,
       },
     };
   }, {});
@@ -164,22 +167,16 @@ const useWordScrambleController = (words: Temp[]) => {
     (acc, cur) => ({
       ...acc,
       // @ts-ignore
-      [cur.answerStatus]: Array.isArray(acc?.answerStatus)
+      [cur.answerStatus]: Array.isArray(acc?.[cur.answerStatus])
         ? // @ts-ignore
-          [...acc.answerStatus, cur]
+          [...acc[cur.answerStatus], cur]
         : [cur],
     }),
     {} as Record<string, WordScrambleWordState[]>,
   );
 
-  const {
-    input,
-    shuffledWord,
-    word,
-    trimmedWord,
-    textWithoutEmptySpace,
-    answerStatus,
-  } = state.words[state.selectedWord];
+  const {input, shuffledWord, word, trimmedWord, textWithoutEmptySpace} =
+    state.words[state.selectedWord];
 
   const history = useRef<Array<{first: number; second: number}>>([]);
 
@@ -237,13 +234,13 @@ const useWordScrambleController = (words: Temp[]) => {
   };
 
   const handleAnimationCompletion = useCallback(
-    ({values}: {values: Partial<WordScrambleWordState>}) => {
-      setElements(prev => {
-        const els = [...prev];
-        els.shift();
-        return els;
-      });
-
+    ({
+      values,
+      index,
+    }: {
+      values: Partial<WordScrambleWordState>;
+      index: number;
+    }) => {
       const output = removeEmptySpace(values.input || '');
       const outputLen = output?.length || -1;
 
@@ -260,9 +257,15 @@ const useWordScrambleController = (words: Temp[]) => {
               answerStatus: 'error',
             }),
           ...(outputLen < textWithoutEmptySpace.length && {
-            answerStatus: 'initial',
+            answerStatus: 'touched',
           }),
         },
+      });
+
+      setElements(prev => {
+        const els = [...prev];
+        els.splice(index, 1);
+        return els;
       });
     },
     [word, textWithoutEmptySpace],
@@ -287,6 +290,7 @@ const useWordScrambleController = (words: Temp[]) => {
 
     const targetPosition = {
       ...second[targetIndex],
+      x: second[targetIndex].x + 8,
       y: secondBoxY.current + second[targetIndex].y,
     };
 
@@ -324,13 +328,15 @@ const useWordScrambleController = (words: Temp[]) => {
     char: string;
     orgIndex: number;
   }) => {
+    // console.log(locationRef.current);
     const lastInput = inputHistory.current[trimmedWord].at(-1) as string;
 
     const targetIndex = lastInput.split('').findIndex(ichar => ichar === ' ');
 
     const targetPosition = {
       ...first[targetIndex],
-      y: firstBoxY.current + first[targetIndex].y,
+      x: first[targetIndex].x + 8,
+      y: firstBoxY.current + first[targetIndex].y + 8,
     };
 
     history.current.push({first: targetIndex, second: orgIndex});

@@ -18,37 +18,14 @@ interface WordScrambleProps {
   listQueryKey: any;
 }
 
-const words = [
-  {
-    word: 'hello',
-    definition:
-      'It is a long established fact that a reader will be distracted by the readable content',
-  },
-  {
-    word: 'test',
-    definition:
-      'It is a long established fact that a reader will be distracted by the readable content',
-  },
-  {
-    word: 'decline',
-    definition:
-      'It is a long established fact that a reader will be distracted by the readable content',
-  },
-  {
-    word: 'september',
-    definition:
-      'It is a long established fact that a reader will be distracted by the readable content',
-  },
-];
-
 const WordScramble: FC<WordScrambleProps> = ({listQueryKey}) => {
   const dimensions = useWindowDimensions();
   const width = useSharedValue(dimensions.width);
   const opacity = useSharedValue(1);
   const queryClient = useQueryClient();
   const data: any = queryClient.getQueryData(listQueryKey);
-  const preparedWords = Array.isArray(data?.data?.list) ? data?.data?.list : [];
-  const state = useWordScrambleController(words as any);
+  const preparedWords = Array.isArray(data?.data) ? data?.data : [];
+  const state = useWordScrambleController(preparedWords as any);
 
   return (
     <WordScrambleProvider value={state}>

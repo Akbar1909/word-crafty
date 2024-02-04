@@ -9,7 +9,7 @@ import {
   // SafeAreaView,
 } from 'react-native';
 import tw from 'twrnc';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import ViewAllWidget from '../../components/ViewAllWidget';
 import MyTheme from '../../theme/colors';
@@ -22,7 +22,8 @@ export default function HomeScreen() {
   const {navigate} = useNavigation();
   const [search, setSearch] = useState('');
 
-  const {array: wordLists} = useGetWordLists();
+  const {topicBasedWordLists, processWordLists, mineWordLists} =
+    useGetWordLists();
 
   const handlePress = (
     wordListId: WordListModel['wordListId'],
@@ -48,12 +49,34 @@ export default function HomeScreen() {
           <Text style={tw`text-4xl font-bold`}>Akbar{'\n'}Bobomurodov</Text>
         </View>
 
-        <View>
-          <ViewAllWidget title="My word lists" to="" />
+        <View style={tw`mb-6`}>
+          <ViewAllWidget title="My word lists" type="mine" />
 
           <FlatList
             horizontal
-            data={wordLists}
+            data={mineWordLists}
+            renderItem={({item}: {item: WordListModel}) => (
+              <WordListCard handlePress={handlePress} {...item} />
+            )}
+          />
+        </View>
+        <View style={tw`mb-3`}>
+          <ViewAllWidget title="Topic related lists" type="topicbased" />
+
+          <FlatList
+            horizontal
+            data={topicBasedWordLists}
+            renderItem={({item}: {item: WordListModel}) => (
+              <WordListCard handlePress={handlePress} {...item} />
+            )}
+          />
+        </View>
+        <View>
+          <ViewAllWidget title="Process lists" type="process" />
+
+          <FlatList
+            horizontal
+            data={processWordLists}
             renderItem={({item}: {item: WordListModel}) => (
               <WordListCard handlePress={handlePress} {...item} />
             )}

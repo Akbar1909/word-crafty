@@ -4,4 +4,5 @@ export interface WordListModel {
   color: string;
   createdAt: number;
   updatedAt: number;
+  isPublic: boolean;
 }

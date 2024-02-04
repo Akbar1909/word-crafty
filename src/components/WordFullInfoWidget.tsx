@@ -3,15 +3,16 @@ import {
   StyleSheet,
   Text,
   View,
-  Image,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import React, {FC} from 'react';
 import tw from 'twrnc';
 import {WordModel} from '../data/word';
 import MyTheme from '../theme/colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {REACT_APP_SERVER_BASE_URL, REACT_APP_PROD_SERVER_BASE_URL} from '@env';
 
 interface WordFullInfoWidgetProps extends WordModel {
   handleSavePress: (definitionId: number) => void;
@@ -53,35 +54,45 @@ const WordFullInfoWidget: FC<WordFullInfoWidgetProps> = ({
                   {definition}
                 </Text>
 
-                {examples.map(({example}, j) => (
-                  <View
-                    key={j}
-                    style={{
-                      flexDirection: 'column',
+                {examples.map(({example, images}, j) => {
+                  return (
+                    <View
+                      key={j}
+                      style={{
+                        flexDirection: 'column',
 
-                      marginBottom: 10,
-                      marginLeft: 6,
-                    }}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <View style={styles.bullet} />
-                      <Text
-                        style={{
-                          fontStyle: 'italic',
-                          letterSpacing: 1.3,
-                          fontSize: 14,
-                        }}>
-                        {example}
-                      </Text>
+                        marginBottom: 10,
+                        marginLeft: 6,
+                      }}>
+                      <View style={tw`flex-row items-center mb-2`}>
+                        <View style={styles.bullet} />
+                        <Text
+                          style={{
+                            fontStyle: 'italic',
+                            letterSpacing: 1.3,
+                            fontSize: 14,
+                          }}>
+                          {example}
+                        </Text>
+                      </View>
+
+                      {images.length >= 1 && (
+                        <FastImage
+                          source={{
+                            uri: `${REACT_APP_SERVER_BASE_URL}/files/serve/${images[0].filename}`,
+                            priority: FastImage.priority.high,
+                          }}
+                          style={{
+                            width: 220,
+                            height: 220,
+                            margin: 'auto',
+                            borderRadius: 15,
+                          }}
+                        />
+                      )}
                     </View>
-
-                    <Image
-                      source={{
-                        uri: 'https://clipart-library.com/data_images/6103.png',
-                      }}
-                      style={{width: 220, height: 220}}
-                    />
-                  </View>
-                ))}
+                  );
+                })}
               </View>
             ))}
           </View>
