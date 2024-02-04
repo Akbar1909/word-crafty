@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {FC, useRef, useEffect, useCallback} from 'react';
-import {View, Pressable} from 'react-native';
+import {View, Pressable, Vibration} from 'react-native';
 import {CHAR_BUTTON_SIZE} from '../constant';
 import useWordScrambleContext from '../_context/useWordScrambleContext';
 import {BoxType} from '../_hooks/useWordScrambleController';
@@ -15,6 +15,13 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+// Optional configuration
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false,
+};
 
 interface CharButtonProps {
   char: string;
@@ -32,6 +39,14 @@ const CORRECT_BACK_COLOR = '#11B981';
 const CORRECT_BORDER_COLOR = '#069668';
 const ERROR_BACK_COLOR = '#F77171';
 const ERROR_BORDER_COLOR = '#B91C1B';
+
+const ONE_SECOND_IN_MS = 1000;
+
+const PATTERN = [
+  1 * ONE_SECOND_IN_MS,
+  2 * ONE_SECOND_IN_MS,
+  3 * ONE_SECOND_IN_MS,
+];
 
 const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
   const {
@@ -155,7 +170,10 @@ const CharButton: FC<CharButtonProps> = ({char, index, boxType}) => {
       ]}
       onPress={() => {
         if (answerStatus !== 'correct') {
+          // Vibration.vibrate();
+
           handleCharButtonTap({i: index, boxType, char});
+          ReactNativeHapticFeedback.trigger('rigid', options);
         }
       }}>
       <CharButtonText char={char} />

@@ -12,6 +12,7 @@ request.interceptors.request.use(
     const {accessToken} = useAuthStore.getState();
 
     config.headers['Authorization'] = `Bearer ${accessToken}`;
+    config.headers['ngrok-skip-browser-warning'] = 'some';
     return config;
   },
   function (error) {

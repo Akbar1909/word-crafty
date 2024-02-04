@@ -211,6 +211,7 @@ const useWordScrambleController = (words: Temp[]) => {
   const finishGame = useCallback(() => {
     history.current = [];
     dispatch({type: WORD_SCRAMBLE_ACTION_TYPES.FINISH_GAME});
+    setElements([]);
   }, []);
 
   const updateCharsLocation = ({
@@ -264,7 +265,7 @@ const useWordScrambleController = (words: Temp[]) => {
 
       setElements(prev => {
         const els = [...prev];
-        els.splice(index, 1);
+        els.shift();
         return els;
       });
     },

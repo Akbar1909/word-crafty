@@ -26,6 +26,7 @@
     "react-native-fast-image": "8.6.3",
     "react-native-fiesta": "0.5.1",
     "react-native-gesture-handler": "2.14.1",
+    "react-native-haptic-feedback": "2.2.0",
     "react-native-mmkv": "2.11.0",
     "react-native-modal": "13.0.1",
     "react-native-paper": "5.12.1",

@@ -29,7 +29,7 @@ function App(): React.JSX.Element {
   return (
     <Stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName={'HomeScreen'}>
+      initialRouteName={false ? 'HomeScreen' : 'LoginScreen'}>
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="HomeScreen" component={MainScreens} />
     </Stack.Navigator>

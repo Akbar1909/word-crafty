@@ -92,30 +92,14 @@ const Screens = () => {
           name="Add"
           children={CreateWordListScreen}
           options={{
-            tabBarIcon: ({focused}) => {
-              return (
-                <View
-                  style={{
-                    top: isIos ? -10 : -20,
-                    width: isIos ? 50 : 60,
-                    height: isIos ? 50 : 60,
-                    borderRadius: isIos ? 25 : 30,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: MyTheme.colors.PRIMARY.main,
-                  }}>
-                  <AntDesign
-                    name="plus"
-                    size={30}
-                    color={
-                      focused
-                        ? MyTheme.colors.COMMON.white
-                        : MyTheme.colors.GREY[500]
-                    }
-                  />
-                </View>
-              );
-            },
+            tabBarIcon: ({focused}) => (
+              <TabBarIcon
+                focused={focused}
+                text="Add"
+                icon="plus"
+                iconComponent="font-awesome"
+              />
+            ),
           }}
         />
 
